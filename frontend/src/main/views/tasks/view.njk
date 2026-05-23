@@ -1,0 +1,67 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <a href="/" class="govuk-back-link">Back to all tasks</a>
+
+      <h1 class="govuk-heading-xl">{{ task.title }}</h1>
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: { text: "Title" },
+            value: { text: task.title }
+          },
+          {
+            key: { text: "Description" },
+            value: { text: task.description if task.description else "No description" }
+          },
+          {
+            key: { text: "Status" },
+            value: { text: task.status | replace("_", " ") }
+          },
+          {
+            key: { text: "Due date" },
+            value: { text: task.dueDateTime | replace("T", " ") | truncate(16, true, "") }
+          },
+          {
+            key: { text: "Created" },
+            value: { text: task.createdAt | replace("T", " ") | truncate(16, true, "") }
+          }
+        ]
+      }) }}
+
+      <h2 class="govuk-heading-m">Update status</h2>
+
+      <form method="POST" action="/tasks/{{ task.id }}/status">
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="status">New status</label>
+          <select class="govuk-select" id="status" name="status">
+            <option value="TODO" {% if task.status === "TODO" %}selected{% endif %}>To do</option>
+            <option value="IN_PROGRESS" {% if task.status === "IN_PROGRESS" %}selected{% endif %}>In progress</option>
+            <option value="DONE" {% if task.status === "DONE" %}selected{% endif %}>Done</option>
+          </select>
+        </div>
+        <button type="submit" class="govuk-button" data-module="govuk-button">
+          Update status
+        </button>
+      </form>
+
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+      <h2 class="govuk-heading-m">Delete task</h2>
+      <p class="govuk-body">This action cannot be undone.</p>
+
+      <form method="POST" action="/tasks/{{ task.id }}/delete">
+        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button">
+          Delete task
+        </button>
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

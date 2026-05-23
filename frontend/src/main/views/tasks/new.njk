@@ -1,0 +1,87 @@
+{% extends "template.njk" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <a href="/" class="govuk-back-link">Back</a>
+
+      <h1 class="govuk-heading-xl">Create a new task</h1>
+
+      {% if errors.general %}
+        <div class="govuk-error-summary" data-module="govuk-error-summary">
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">There is a problem</h2>
+            <div class="govuk-error-summary__body">
+              <p>{{ errors.general }}</p>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <form method="POST" action="/tasks" novalidate>
+
+        <div class="govuk-form-group {% if errors.title %}govuk-form-group--error{% endif %}">
+          <label class="govuk-label govuk-label--s" for="title">
+            Title
+          </label>
+          {% if errors.title %}
+            <p id="title-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ errors.title }}
+            </p>
+          {% endif %}
+          <input class="govuk-input {% if errors.title %}govuk-input--error{% endif %}"
+                 id="title" name="title" type="text"
+                 value="{{ values.title }}"
+                 {% if errors.title %}aria-describedby="title-error"{% endif %}>
+        </div>
+
+        <div class="govuk-form-group">
+          <label class="govuk-label govuk-label--s" for="description">
+            Description <span class="govuk-hint">(optional)</span>
+          </label>
+          <textarea class="govuk-textarea" id="description" name="description" rows="4">{{ values.description }}</textarea>
+        </div>
+
+        <div class="govuk-form-group {% if errors.status %}govuk-form-group--error{% endif %}">
+          <label class="govuk-label govuk-label--s" for="status">
+            Status
+          </label>
+          {% if errors.status %}
+            <p id="status-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ errors.status }}
+            </p>
+          {% endif %}
+          <select class="govuk-select {% if errors.status %}govuk-select--error{% endif %}"
+                  id="status" name="status"
+                  {% if errors.status %}aria-describedby="status-error"{% endif %}>
+            <option value="TODO" {% if values.status === "TODO" %}selected{% endif %}>To do</option>
+            <option value="IN_PROGRESS" {% if values.status === "IN_PROGRESS" %}selected{% endif %}>In progress</option>
+            <option value="DONE" {% if values.status === "DONE" %}selected{% endif %}>Done</option>
+          </select>
+        </div>
+
+        <div class="govuk-form-group {% if errors.dueDateTime %}govuk-form-group--error{% endif %}">
+          <label class="govuk-label govuk-label--s" for="dueDateTime">
+            Due date and time
+          </label>
+          <div class="govuk-hint">For example, 2026-12-31T17:00</div>
+          {% if errors.dueDateTime %}
+            <p id="dueDateTime-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ errors.dueDateTime }}
+            </p>
+          {% endif %}
+          <input class="govuk-input govuk-input--width-20 {% if errors.dueDateTime %}govuk-input--error{% endif %}"
+                 id="dueDateTime" name="dueDateTime" type="datetime-local"
+                 value="{{ values.dueDateTime }}"
+                 {% if errors.dueDateTime %}aria-describedby="dueDateTime-error"{% endif %}>
+        </div>
+
+        <button type="submit" class="govuk-button" data-module="govuk-button">
+          Create task
+        </button>
+
+      </form>
+    </div>
+  </div>
+{% endblock %}
